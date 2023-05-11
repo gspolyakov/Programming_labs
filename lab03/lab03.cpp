@@ -20,6 +20,7 @@ public:
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 elements[i][j] = elems[i][j];
+                cout << elements[i][j] << endl;
             }
 
         }
@@ -27,12 +28,18 @@ public:
 
     Matrix operator+(const Matrix & other) const{
         if (columns == other.columns and rows == other.rows) {
+            int** result = new int*[columns];
+            for (int i = 0; i < rows; i++) {
+                result[i] = new int[rows];
+            }
             for (int i = 0; i < columns; i++){
                 for (int j = 0; j < rows; j++){
-                    elements[i][j] += other.elements[i][j];
+                    result[i][j] = elements[i][j] + other.elements[i][j];
                 }
             }
-        return Matrix(elements, rows, columns);
+        return {result, rows, columns};
+        } else{
+            throw runtime_error("Operation cannot be performed");
         }
     };
 
@@ -47,7 +54,9 @@ public:
                 result[i][j] -= other.elements[i][j];
                 }
             }
-            return Matrix(result, rows, columns);
+            return {result, rows, columns};
+        } else{
+            throw runtime_error("Operation cannot be performed");
         }
     };
 
@@ -59,17 +68,24 @@ public:
                 result += (elements[i][j] * other.elements[i][j]);
                 }
             }
+            return result;
+        } else{
+            throw runtime_error("Operation cannot be performed");
         }
-        return result;
+
     };
 
     Matrix operator*(const int& num){
+        int** result = new int*[columns];
+        for (int i = 0; i < rows; i++) {
+            result[i] = new int[rows];
+        }
         for(int i = 0; i < columns; i++){
             for (int j = 0; j<rows; j++){
-                elements[i][j]*=num;
+                result[i][j] = elements[i][j]*num;
             }
         }
-        return Matrix(elements, rows, columns);
+        return {result, rows, columns};
     }
 
     Matrix operator/(const int& num) const {
@@ -85,7 +101,7 @@ public:
                 result[i][j] = elements[i][j] / num;
             }
         }
-        return Matrix(result, rows, columns);
+        return {result, rows, columns};
     }
 
     void PrintMatrix(){
@@ -116,6 +132,7 @@ int main(){
             arr[i][j] = x;
         }
     }
+
     Matrix matrix_1 = Matrix(arr, row, col);
     Matrix matrix_2 = Matrix(arr, row, col);
     Matrix matrix_plus = matrix_1+matrix_2;
@@ -126,10 +143,10 @@ int main(){
 
     matrix_1.PrintMatrix();
 
-//    matrix_plus.PrintMatrix();
-//    matrix_minus.PrintMatrix();
-//    cout << matrix_scalar << endl;
-//    matrix_prod.PrintMatrix();
-//    matrix_div.PrintMatrix();
+    matrix_plus.PrintMatrix();
+    matrix_minus.PrintMatrix();
+    cout << matrix_scalar << endl;
+    matrix_prod.PrintMatrix();
+    matrix_div.PrintMatrix();
     return 0;
 }
