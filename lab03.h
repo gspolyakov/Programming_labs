@@ -1,15 +1,19 @@
 #include <iostream>
+#include "lab02.h"
 
 using namespace std;
-
 class Matrix{
 
+    friend Vector;
+
 private:
+
     int rows;
     int columns;
     int** elements;
 
 public:
+
     Matrix(int** elems, int row, int col) {
         rows = row;
         columns = col;
@@ -20,9 +24,7 @@ public:
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 elements[i][j] = elems[i][j];
-                cout << elements[i][j] << endl;
             }
-
         }
     }
 
@@ -37,7 +39,7 @@ public:
                     result[i][j] = elements[i][j] + other.elements[i][j];
                 }
             }
-        return {result, rows, columns};
+            return {result, rows, columns};
         } else{
             throw runtime_error("Operation cannot be performed");
         }
@@ -51,7 +53,7 @@ public:
             }
             for (int i = 0; i < columns; i++) {
                 for (int j = 0; j < columns; j++) {
-                result[i][j] -= other.elements[i][j];
+                    result[i][j] -= other.elements[i][j];
                 }
             }
             return {result, rows, columns};
@@ -65,7 +67,7 @@ public:
         if (columns == other.columns and rows == other.rows) {
             for (int i = 0; i < columns; i++) {
                 for (int j = 0; j < columns; j++) {
-                result += (elements[i][j] * other.elements[i][j]);
+                    result += (elements[i][j] * other.elements[i][j]);
                 }
             }
             return result;
@@ -74,6 +76,19 @@ public:
         }
 
     };
+
+    Matrix operator*(Vector& other){
+        int** result = new int*[columns];
+        for(int i=0; i<columns; i++)
+            result[i] = new int[1];
+
+        for(int i = 0; i < columns; i++){
+            for (int j = 0; j < rows; j++)
+                result[i] += elements[i][j] * other.elements[i];
+
+        }
+        return {result, sizeof result, 1};
+    }
 
     Matrix operator*(const int& num){
         int** result = new int*[columns];
@@ -116,37 +131,3 @@ public:
     }
 
 };
-
-int main(){
-    int col, row, n, x;
-    cin >> col;
-    cin >> row;
-    cin >> n;
-    int** arr = new int*[col];
-    for(int i=0; i<col; i++){
-        arr[i] = new int[row];
-    }
-    for(int i=0; i<col; i++){
-        for (int j=0; j < row; j++){
-            cin >> x;
-            arr[i][j] = x;
-        }
-    }
-
-    Matrix matrix_1 = Matrix(arr, row, col);
-    Matrix matrix_2 = Matrix(arr, row, col);
-    Matrix matrix_plus = matrix_1+matrix_2;
-    Matrix matrix_minus = matrix_1-matrix_2;
-    int matrix_scalar = matrix_1*matrix_2;
-    Matrix matrix_prod = matrix_1*n;
-    Matrix matrix_div = matrix_1/n;
-
-    matrix_1.PrintMatrix();
-
-    matrix_plus.PrintMatrix();
-    matrix_minus.PrintMatrix();
-    cout << matrix_scalar << endl;
-    matrix_prod.PrintMatrix();
-    matrix_div.PrintMatrix();
-    return 0;
-}

@@ -2,14 +2,17 @@
 
 using namespace std;
 
+
 class Vector{
+    friend Matrix;
 
 private:
     int size;
     int* elements;
 
 public:
-    Vector(int* elems, int sz) {
+
+    Vector(const int* elems, int sz) {
         size = sz;
         elements = new int[size];
         for (int i = 0; i < size; i++) {
@@ -53,6 +56,26 @@ public:
         return result;
     };
 
+    Vector operator*(const Matrix & other) const{
+        int* result = new int[size];
+        if (size == other.columns()) {
+            for (int i = 0; i < size; i++) {
+                int sum = 0;
+                for (int j = 0; j < other.rows(); j++)
+                    sum += other.elements()[i][j];
+                result += (elements[i] * sum);
+            }
+        } else if (size == other.rows()) {
+            for (int i = 0; i < size; i++) {
+                int sum = 0;
+                for (int j = 0; j < other.columns(); j++)
+                    sum += other.elements()[i][j];
+                result += (elements[i] * sum);
+            }
+        }
+        return {result, size};
+    };
+
     Vector operator*(const int& num){
         int* result = new int[size];
         for(int i =0; i < size; i++){
@@ -60,7 +83,6 @@ public:
         }
         return {result, size};
     }
-
     Vector operator/(const int& num) const {
         if (num == 0) {
             throw runtime_error("Cannot divide by zero!");
@@ -78,30 +100,4 @@ public:
         }
         cout << endl;
     }
-
 };
-
-int main(){
-    int s, n, x;
-    cin >> s;
-    cin >> n;
-    int* arr = new int[s];
-    for(int i=0; i<s; i++){
-        cin >> x;
-        arr[i] = x;
-    }
-    Vector vec_1 = Vector(arr, s);
-    Vector vec_2 = Vector(arr, s);
-    Vector vec_plus = vec_1+vec_2;
-    Vector vec_minus = vec_1-vec_2;
-    int vec_scalar = vec_1*vec_2;
-    Vector vec_prod = vec_1*n;
-    Vector vec_div = vec_1/n;
-
-    vec_plus.PrintVector();
-    vec_minus.PrintVector();
-    cout << vec_scalar << endl;
-    vec_prod.PrintVector();
-    vec_div.PrintVector();
-    return 0;
-}
